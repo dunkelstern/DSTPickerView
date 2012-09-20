@@ -3,7 +3,7 @@ DSTPickerView
 
 Drop-in replacement for UIPickerView with additional features.
 
-If you use MTStatusBarOverlay in your app, please drop me a line so that I can add your app here!
+If you use DSTPickerView in your app, please drop me a line so that I can add your app here!
 
 1. Fully resizable, no 216 pixels maximum size
 2. Themeable, change the background gradient, the color of the selection bar, enable and disable shine
@@ -34,3 +34,8 @@ Screenshots
 
 ## Custom `DSTPickerView`
 ![DSTPickerView](https://github.com/dunkelstern/DSTPickerView/blob/master/DSTPickerView.png?raw=true)
+
+Apps using DSTPickerView
+========================
+
+- CEWE FOTOWELT (unreleased)

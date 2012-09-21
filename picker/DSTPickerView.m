@@ -721,12 +721,22 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
     [subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     UIView *view = cols[idx][indexPath.row];
     CGRect frame = [view frame];
-    frame.origin.x = 4;
-    frame.origin.y = floorf(_elementDistance / 2.0);
+    if ([view isKindOfClass:[UILabel class]]) {
+        UILabel *label = (UILabel *)view;
+        CGFloat height = -[label.font ascender] + [label.font descender];
+        frame.origin.x = 4;
+        frame.origin.y = floorf(_elementDistance / 2.0 + ([rowSizes[idx] floatValue] - height) / 2.0 );
+        frame.size.width = [componentWidths[idx] floatValue];
+        frame.size.height = height;
+    } else {
+        frame.origin.x = 4;
+        frame.origin.y = floorf(_elementDistance / 2.0);
+    }
     [view setFrame:frame];
     [cell.contentView addSubview:view];
     [cell setRow:indexPath.row];
     [cell setSection:indexPath.section];
+
 
     return cell;
 }

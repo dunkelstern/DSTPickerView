@@ -679,7 +679,7 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
     [darkenBottom setFrame:CGRectMake(0, roundCorners.bounds.size.height - floorf((self.bounds.size.height - 20) / 4), roundCorners.bounds.size.width, floorf((self.bounds.size.height - 20) / 4))];
 
     [roundCorners bringSubviewToFront:selectionIndicator];
-    [selectionIndicator setFrame:CGRectMake(0, floorf((roundCorners.bounds.size.height - height) / 2.0), roundCorners.bounds.size.width, height + 15)];
+    [selectionIndicator setFrame:CGRectMake(0, floorf((roundCorners.bounds.size.height - height + 7) / 2.0), roundCorners.bounds.size.width, height + 15)];
 }
 
 - (CGFloat)calculateTableViewOffset {

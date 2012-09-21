@@ -246,14 +246,18 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
 - (void)setDataSource:(id<DSTPickerViewDataSource>)dataSource {
     if (dataSource != _dataSource) {
         _dataSource = dataSource;
-        [self reloadAllComponents];
+        if (_delegate) {
+            [self reloadAllComponents];
+        }
     }
 }
 
 - (void)setDelegate:(id<DSTPickerViewDelegate>)delegate {
     if (delegate != _delegate) {
         _delegate = delegate;
-        [self reloadAllComponents];
+        if (_dataSource) {
+            [self reloadAllComponents];
+        }
     }
 }
 

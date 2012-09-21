@@ -501,8 +501,13 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
         [tableView setDataSource:self];
         [tableView setDelegate:self];
 
+        CGFloat inset = floorf((tableView.frame.size.height - [rowSizes[idx] floatValue] - _elementDistance) / 2.0);
+        [tableView setContentInset:UIEdgeInsetsMake(inset, 0, inset, 0)];
+
         [content addSubview:tableView];
         [roundCorners addSubview:content];
+
+        [self selectRow:[selectedItems[idx] integerValue] inComponent:idx animated:NO notify:NO];
 
         x += [componentWidths[idx] floatValue] + 8;
     }];
@@ -529,8 +534,11 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
             top += 20;
         }
         [tableView setFrame:CGRectMake(4, top, [componentWidths[idx] floatValue], self.bounds.size.height - 20 - top)];
+        
         CGFloat inset = floorf((tableView.frame.size.height - [rowSizes[idx] floatValue] - _elementDistance) / 2.0);
         [tableView setContentInset:UIEdgeInsetsMake(inset, 0, inset, 0)];
+
+        //[self selectRow:[selectedItems[idx] integerValue] inComponent:idx animated:NO notify:NO];
     }];
 
     CGFloat offset = [self calculateTableViewOffset];

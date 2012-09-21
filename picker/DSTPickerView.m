@@ -753,6 +753,11 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     // play tock sound if row changed
     NSUInteger idx = [tableViews indexOfObject:scrollView];
+
+    if (idx >= [rowSizes count]) {
+        return;
+    }
+
     CGFloat inset = floorf((scrollView.frame.size.height - [rowSizes[idx] floatValue] - _elementDistance) / 2.0);
     CGFloat middlePosition = scrollView.contentOffset.y + inset;
     if (middlePosition < 0) middlePosition = 0;

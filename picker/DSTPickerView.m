@@ -440,6 +440,8 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
     CGPoint offset = CGPointMake(0, floorf(-inset + rowHeight * row));
     [scrollView setContentOffset:offset animated:animated];
 
+    selectedItems[component] = @(row);
+
     if (notify) {
         if (animated) {
             [self performSelector:@selector(notifyDelegateOfRowChange:) withObject:@{ @"row" : @(row), @"component" : @(component) } afterDelay:0.25];

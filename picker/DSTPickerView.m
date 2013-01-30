@@ -241,6 +241,22 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
     CGContextRestoreGState(context);
 }
 
+- (void)willMoveToSuperview:(UIView *)newSuperview {
+    [super willMoveToSuperview:newSuperview];
+    id ds, dlg;
+    if (newSuperview == nil) {
+        ds = nil;
+        dlg = nil;
+    } else {
+        ds = self;
+        dlg = self;
+    }
+    [tableViews enumerateObjectsUsingBlock:^(UITableView *t, NSUInteger idx, BOOL *stop) {
+        t.delegate = dlg;
+        t.dataSource = ds;
+    }];
+}
+
 #pragma mark - API
 
 - (void)setDataSource:(id<DSTPickerViewDataSource>)dataSource {
@@ -454,9 +470,11 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
 - (void)notifyDelegateOfRowChange:(NSDictionary *)data {
     [_delegate pickerView:self didSelectRow:[data[@"row"] integerValue] inComponent:[data[@"component"] integerValue]];
 
-    // play final tock sound
-    if ([data[@"row"] integerValue] != [currentItems[[data[@"component"] integerValue]] integerValue]) {
-        AudioServicesPlaySystemSound(1104);
+    if ([currentItems count] > 0) {
+        // play final tock sound
+        if ([data[@"row"] integerValue] != [currentItems[[data[@"component"] integerValue]] integerValue]) {
+            AudioServicesPlaySystemSound(1104);
+        }
     }
 }
 

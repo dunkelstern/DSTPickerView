@@ -807,12 +807,12 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     NSUInteger idx = [tableViews indexOfObject:scrollView];
-    CGFloat inset = floorf((scrollView.frame.size.height - [rowSizes[idx] floatValue] - _elementDistance) / 2.0);
+    CGFloat rowHeight = [rowSizes[idx] floatValue] + _elementDistance;
+
+    CGFloat inset = floorf((scrollView.frame.size.height - rowHeight) / 2.0);
     CGFloat middlePosition = scrollView.contentOffset.y + inset;
     if (middlePosition < 0) middlePosition = 0;
-    CGFloat rowHeight = [rowSizes[idx] floatValue] + _elementDistance;
     CGFloat remainder = fmodf(middlePosition, rowHeight);
-    NSInteger row = (middlePosition - remainder) / rowHeight;
 
     CGPoint offset;
     if (remainder < rowHeight / 2.0) {
@@ -821,8 +821,9 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
     } else {
         // scroll down
         offset = CGPointMake(0, middlePosition - remainder + rowHeight - inset);
-        row++;
     }
+
+    NSInteger row = round((offset.y + inset) / rowHeight);
 
     // clamp row
     if (row > [cols[idx] count] - 1) {

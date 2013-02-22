@@ -475,6 +475,9 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
 }
 
 - (void)notifyDelegateOfRowChange:(NSDictionary *)data {
+    if ([data[@"row"] integerValue] == -1) {
+        return;
+    }
     [_delegate pickerView:self didSelectRow:[data[@"row"] integerValue] inComponent:[data[@"component"] integerValue]];
 
     if ([currentItems count] > 0) {

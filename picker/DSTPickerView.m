@@ -259,6 +259,13 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
 
 #pragma mark - API
 
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    [self setNeedsDisplay];
+    [self setNeedsLayout];
+    [self reloadAllComponents];
+}
+
 - (void)setDataSource:(id<DSTPickerViewDataSource>)dataSource {
     if (dataSource != _dataSource) {
         _dataSource = dataSource;

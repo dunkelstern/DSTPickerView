@@ -404,7 +404,7 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
 
         // image was either not implemented or did not yield an element
         if (!item) {
-            if ([_delegate respondsToSelector:@selector(pickerView:viewForRow:forComponent:)]) {
+            if ([_delegate respondsToSelector:@selector(pickerView:viewForRow:forComponent:reusingView:)]) {
                 item = [_delegate pickerView:self viewForRow:i forComponent:component reusingView:nil];
                 if (calculateRowSize) {
                     [item setFrame:CGRectMake(0, 0, [componentWidths[component] floatValue], item.frame.size.height)];

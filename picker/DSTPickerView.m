@@ -159,6 +159,7 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
         [roundCorners setClipsToBounds:YES];
         [roundCorners.layer setMasksToBounds:YES];
         [roundCorners.layer setCornerRadius:5.0];
+        [roundCorners setAutoresizesSubviews:NO];
         [self addSubview:roundCorners];
 
         // selection indicator
@@ -488,28 +489,52 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
     }
 }
 
+#define LABEL_TAG 148535
+
 - (void)updateView {
     if (updateLocked) {
         return;
     }
 
-    // TODO: recycle tableviews instead of creating new ones all the time
-
     // setup tableviews
-    [contentViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    [contentViews removeAllObjects];
-    [tableViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    [tableViews removeAllObjects];
-
     __block CGFloat x = 0.0;
     [components enumerateObjectsUsingBlock:^(NSString *componentTitle, NSUInteger idx, BOOL *stop) {
-        DSTPickerContentView *content = [[DSTPickerContentView alloc] initWithFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue] + 8, self.bounds.size.height - 20)];
-        [content setBackgroundColor:[UIColor whiteColor]];
-        [contentViews addObject:content];
+        DSTPickerContentView *content;
+        UITableView *tableView;
+        UILabel *label;
 
-        CGFloat top = 0;
-        if ([components[idx] length] > 0) {
-            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, [componentWidths[idx] floatValue], 20.0)];
+        if (idx < contentViews.count) {
+            // reuse available tableviews
+            content = contentViews[idx];
+            [content setFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue] + 8, self.bounds.size.height - 20)];
+            [content setBounds:CGRectMake(0, 0, [componentWidths[idx] floatValue] + 8, self.bounds.size.height - 20)];
+            tableView = tableViews[idx];
+            [tableView setFrame:CGRectMake(4, ([components[idx] length] > 0) ? 20.0 : 0.0, [componentWidths[idx] floatValue], self.bounds.size.height - 20)];
+            if ([components[idx] length] > 0) {
+                label = (UILabel *)[content viewWithTag:LABEL_TAG];
+                [label setFrame:CGRectMake(0, 0, [componentWidths[idx] floatValue], 20.0)];
+            }
+            [tableView reloadData];
+        } else {
+            // create new tableviews
+            content = [[DSTPickerContentView alloc] initWithFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue] + 8, self.bounds.size.height - 20)];
+            [content setBounds:CGRectMake(0, 0, [componentWidths[idx] floatValue] + 8, self.bounds.size.height - 20)];
+            [content setBackgroundColor:[UIColor whiteColor]];
+            
+            tableView = [[UITableView alloc] initWithFrame:CGRectMake(4, ([components[idx] length] > 0) ? 20.0 : 0.0, [componentWidths[idx] floatValue], self.bounds.size.height - 20) style:UITableViewStylePlain];
+            [tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+            [tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0, 0, 0, -10)];
+            [tableView setClipsToBounds:YES];
+            [tableView setDataSource:self];
+            [tableView setDelegate:self];
+            [content addSubview:tableView];
+            [tableViews addObject:tableView];
+            [contentViews addObject:content];
+
+            [roundCorners addSubview:content];
+        }
+        if (([components[idx] length] > 0) && (!label)) {
+            label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, [componentWidths[idx] floatValue], 20.0)];
             [label setBackgroundColor:[UIColor clearColor]];
             [label setTextColor:[UIColor blackColor]];
             [label setFont:[UIFont systemFontOfSize:13.0]];
@@ -517,26 +542,12 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
             [label setTextAlignment:UITextAlignmentCenter];
             [label setText:components[idx]];
             [content addSubview:label];
-            top += 20.0;
         }
-
-        UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(4, top, [componentWidths[idx] floatValue], self.bounds.size.height - 20) style:UITableViewStylePlain];
-        [tableViews addObject:tableView];
-
-        [tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-        [tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0, 0, 0, -10)];
-        [tableView setClipsToBounds:YES];
-        [tableView setDataSource:self];
-        [tableView setDelegate:self];
 
         CGFloat inset = floorf((tableView.frame.size.height - [rowSizes[idx] floatValue] - _elementDistance) / 2.0);
         [tableView setContentInset:UIEdgeInsetsMake(inset, 0, inset, 0)];
 
-        [content addSubview:tableView];
-        [roundCorners addSubview:content];
-
         [self selectRow:[selectedItems[idx] integerValue] inComponent:idx animated:NO notify:NO];
-
         x += [componentWidths[idx] floatValue] + 8;
     }];
 
@@ -554,6 +565,7 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
     __block CGFloat x = 0.0;
     [contentViews enumerateObjectsUsingBlock:^(DSTPickerContentView *contentView, NSUInteger idx, BOOL *stop) {
         [contentView setFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue] + 8, self.bounds.size.height - 20)];
+        [contentView setBounds:CGRectMake(0, 0, [componentWidths[idx] floatValue] + 8, self.bounds.size.height - 20)];
         x += [componentWidths[idx] floatValue] + 8;
     }];
     [tableViews enumerateObjectsUsingBlock:^(UITableView *tableView, NSUInteger idx, BOOL *stop) {

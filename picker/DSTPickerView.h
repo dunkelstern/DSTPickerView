@@ -13,6 +13,7 @@
 @protocol DSTPickerViewDelegate <NSObject>
 - (void)pickerView:(DSTPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component;
 
+// components are horizontally centered on picker view
 - (CGFloat)pickerView:(DSTPickerView *)pickerView widthForComponent:(NSInteger)component;
 
 @optional

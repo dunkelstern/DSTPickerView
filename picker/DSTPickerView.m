@@ -11,6 +11,12 @@
 
 #import "DSTPickerView.h"
 
+
+#define COMPONENT_BORDER_WIDTH          1
+#define COMPONENT_INNER_BORDER_WIDTH    3
+#define COMPONENT_PADDING               (COMPONENT_BORDER_WIDTH+COMPONENT_INNER_BORDER_WIDTH)
+
+
 #pragma mark - DSTPickerTableViewCell
 
 @interface DSTPickerTableViewCell : UITableViewCell {
@@ -62,13 +68,13 @@
 
     // black border
     [[UIColor blackColor] setFill];
-    CGContextFillRect(context, CGRectMake(0, 0, 1, self.bounds.size.height));
-    CGContextFillRect(context, CGRectMake(self.bounds.size.width - 1, 0, 1, self.bounds.size.height));
+    CGContextFillRect(context, CGRectMake(0, 0, COMPONENT_BORDER_WIDTH, self.bounds.size.height));
+    CGContextFillRect(context, CGRectMake(self.bounds.size.width - COMPONENT_BORDER_WIDTH, 0, COMPONENT_BORDER_WIDTH, self.bounds.size.height));
 
     // inner border
     [[UIColor lightGrayColor] setFill];
-    CGContextFillRect(context, CGRectMake(1, 0, 3, self.bounds.size.height));
-    CGContextFillRect(context, CGRectMake(self.bounds.size.width - 4, 0, 3, self.bounds.size.height));
+    CGContextFillRect(context, CGRectMake(COMPONENT_BORDER_WIDTH, 0, COMPONENT_INNER_BORDER_WIDTH, self.bounds.size.height));
+    CGContextFillRect(context, CGRectMake(self.bounds.size.width - COMPONENT_PADDING, 0, COMPONENT_INNER_BORDER_WIDTH, self.bounds.size.height));
 
     CGContextRestoreGState(context);
 }
@@ -340,7 +346,7 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
     }
 
     // fetch width of the current component
-    componentWidths[component] = @([_delegate pickerView:self widthForComponent:component] - 4);
+    componentWidths[component] = @([_delegate pickerView:self widthForComponent:component]);
 
     // fetch rows for the component
     for (NSUInteger i = 0; i < numberOfRows; i++) {
@@ -506,10 +512,12 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
         if (idx < contentViews.count) {
             // reuse available tableviews
             content = contentViews[idx];
-            [content setFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue] + 8, self.bounds.size.height - 20)];
-            [content setBounds:CGRectMake(0, 0, [componentWidths[idx] floatValue] + 8, self.bounds.size.height - 20)];
+            [content setFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue], self.bounds.size.height - 20)];
             tableView = tableViews[idx];
-            [tableView setFrame:CGRectMake(4, ([components[idx] length] > 0) ? 20.0 : 0.0, [componentWidths[idx] floatValue], self.bounds.size.height - 20)];
+            [tableView setFrame:CGRectMake(COMPONENT_PADDING,
+                                           ([components[idx] length] > 0) ? 20.0 : 0.0,
+                                           [componentWidths[idx] floatValue]-2*COMPONENT_PADDING,
+                                           self.bounds.size.height - 20)];
             if ([components[idx] length] > 0) {
                 label = (UILabel *)[content viewWithTag:LABEL_TAG];
                 [label setFrame:CGRectMake(0, 0, [componentWidths[idx] floatValue], 20.0)];
@@ -517,11 +525,14 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
             [tableView reloadData];
         } else {
             // create new tableviews
-            content = [[DSTPickerContentView alloc] initWithFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue] + 8, self.bounds.size.height - 20)];
-            [content setBounds:CGRectMake(0, 0, [componentWidths[idx] floatValue] + 8, self.bounds.size.height - 20)];
+            content = [[DSTPickerContentView alloc] initWithFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue], self.bounds.size.height - 20)];
             [content setBackgroundColor:[UIColor whiteColor]];
             
-            tableView = [[UITableView alloc] initWithFrame:CGRectMake(4, ([components[idx] length] > 0) ? 20.0 : 0.0, [componentWidths[idx] floatValue], self.bounds.size.height - 20) style:UITableViewStylePlain];
+            tableView = [[UITableView alloc] initWithFrame:CGRectMake(COMPONENT_PADDING,
+                                                                      ([components[idx] length] > 0) ? 20.0 : 0.0,
+                                                                      [componentWidths[idx] floatValue]-2*COMPONENT_PADDING,
+                                                                      self.bounds.size.height - 20)
+                                                     style:UITableViewStylePlain];
             [tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
             [tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0, 0, 0, -10)];
             [tableView setClipsToBounds:YES];
@@ -564,16 +575,18 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
 - (void)layoutSubviews {
     __block CGFloat x = 0.0;
     [contentViews enumerateObjectsUsingBlock:^(DSTPickerContentView *contentView, NSUInteger idx, BOOL *stop) {
-        [contentView setFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue] + 8, self.bounds.size.height - 20)];
-        [contentView setBounds:CGRectMake(0, 0, [componentWidths[idx] floatValue] + 8, self.bounds.size.height - 20)];
-        x += [componentWidths[idx] floatValue] + 8;
+        [contentView setFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue], self.bounds.size.height - 20)];
+        x += [componentWidths[idx] floatValue];
     }];
     [tableViews enumerateObjectsUsingBlock:^(UITableView *tableView, NSUInteger idx, BOOL *stop) {
         CGFloat top = 0;
         if ([components[idx] length] > 0) {
             top += 20;
         }
-        [tableView setFrame:CGRectMake(4, top, [componentWidths[idx] floatValue], self.bounds.size.height - 20 - top)];
+        [tableView setFrame:CGRectMake(COMPONENT_PADDING,
+                                       top,
+                                       [componentWidths[idx] floatValue]-2*COMPONENT_PADDING,
+                                       self.bounds.size.height - 20 - top)];
         
         CGFloat inset = floorf((tableView.frame.size.height - [rowSizes[idx] floatValue] - _elementDistance) / 2.0);
         [tableView setContentInset:UIEdgeInsetsMake(inset, 0, inset, 0)];
@@ -733,7 +746,7 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
 - (CGFloat)calculateTableViewOffset {
     CGFloat sumSize = 0;
     for (NSNumber *width in componentWidths) {
-        sumSize += [width integerValue] + 8; // include frame
+        sumSize += [width integerValue];
     }
     return floorf((self.bounds.size.width - sumSize) / 2.0);
 }
@@ -772,12 +785,10 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
     if ([view isKindOfClass:[UILabel class]]) {
         UILabel *label = (UILabel *)view;
         CGFloat height = -[label.font ascender] + [label.font descender];
-        frame.origin.x = 4;
         frame.origin.y = floorf(_elementDistance / 2.0 + ([rowSizes[idx] floatValue] - height) / 2.0 );
         frame.size.width = [componentWidths[idx] floatValue];
         frame.size.height = height;
     } else {
-        frame.origin.x = 4;
         frame.origin.y = floorf(_elementDistance / 2.0);
     }
     [view setFrame:frame];

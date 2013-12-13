@@ -140,51 +140,60 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code
-        colorspace = CGColorSpaceCreateDeviceRGB();
-        _backgroundGradientStartColor = [UIColor colorWithRed:26.0/255.0 green:35.0/255.0 blue:78.0/255.0 alpha:1.0];
-//        _backgroundGradientStartColor = [UIColor blackColor];
-//        _backgroundGradientEndColor = [UIColor colorWithWhite:0.2 alpha:1.0];
-        _backgroundGradientEndColor = [UIColor colorWithRed:32.0/255.0 green:34.0/255.0 blue:41.0/255.0 alpha:1.0];
-        _selectionIndicatorBaseColor = [UIColor colorWithRed:118.0/255.0 green:126.0/255.0 blue:180.0/255.0 alpha:0.5];
-        _addShine = YES;
-        _elementDistance = 20;
-
-        components = [NSMutableArray array];
-        componentWidths = [NSMutableArray array];
-        rowSizes = [NSMutableArray array];
-        cols = [NSMutableArray array];
-        selectedItems = [NSMutableArray array];
-        currentItems = [NSMutableArray array];
-        tableViews = [NSMutableArray array];
-        contentViews = [NSMutableArray array];
-        updateLocked = NO;
-
-        // round corners for selector
-        roundCorners = [[UIView alloc] init];
-        [roundCorners setClipsToBounds:YES];
-        [roundCorners.layer setMasksToBounds:YES];
-        [roundCorners.layer setCornerRadius:5.0];
-        [roundCorners setAutoresizesSubviews:NO];
-        [self addSubview:roundCorners];
-
-        // selection indicator
-        selectionIndicator = [[UIImageView alloc] init];
-        [selectionIndicator setHidden:YES];
-        [roundCorners addSubview:selectionIndicator];
-
-        // darkener
-        darkenTop = [[UIImageView alloc] init];
-        [roundCorners addSubview:darkenTop];
-
-        darkenBottom = [[UIImageView alloc] init];
-        [roundCorners addSubview:darkenBottom];
-
-        [self setClipsToBounds:YES];
-        [self setContentMode:UIViewContentModeRedraw];
-        [self reloadAllComponents];
+        [self initialize];
     }
     return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder: aDecoder];
+    if (self) {
+        [self initialize];
+    }
+    return self;
+}
+
+- (void)initialize {
+    colorspace = CGColorSpaceCreateDeviceRGB();
+    _backgroundGradientStartColor = [UIColor colorWithRed:26.0/255.0 green:35.0/255.0 blue:78.0/255.0 alpha:1.0];
+    _backgroundGradientEndColor = [UIColor colorWithRed:32.0/255.0 green:34.0/255.0 blue:41.0/255.0 alpha:1.0];
+    _selectionIndicatorBaseColor = [UIColor colorWithRed:118.0/255.0 green:126.0/255.0 blue:180.0/255.0 alpha:0.5];
+    _addShine = YES;
+    _elementDistance = 20;
+    
+    components = [NSMutableArray array];
+    componentWidths = [NSMutableArray array];
+    rowSizes = [NSMutableArray array];
+    cols = [NSMutableArray array];
+    selectedItems = [NSMutableArray array];
+    currentItems = [NSMutableArray array];
+    tableViews = [NSMutableArray array];
+    contentViews = [NSMutableArray array];
+    updateLocked = NO;
+    
+    // round corners for selector
+    roundCorners = [[UIView alloc] init];
+    [roundCorners setClipsToBounds:YES];
+    [roundCorners.layer setMasksToBounds:YES];
+    [roundCorners.layer setCornerRadius:5.0];
+    [roundCorners setAutoresizesSubviews:NO];
+    [self addSubview:roundCorners];
+    
+    // selection indicator
+    selectionIndicator = [[UIImageView alloc] init];
+    [selectionIndicator setHidden:YES];
+    [roundCorners addSubview:selectionIndicator];
+    
+    // darkener
+    darkenTop = [[UIImageView alloc] init];
+    [roundCorners addSubview:darkenTop];
+    
+    darkenBottom = [[UIImageView alloc] init];
+    [roundCorners addSubview:darkenBottom];
+    
+    [self setClipsToBounds:YES];
+    [self setContentMode:UIViewContentModeRedraw];
+    [self reloadAllComponents];
 }
 
 - (void)dealloc {

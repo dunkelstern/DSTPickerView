@@ -365,7 +365,7 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
         }
 
         UIView *item = nil;
-        if ((title) && ([title length] > 0)) {
+        if (title) {
             // fetch font if possible
             UIFont *font = nil;
             if ([_delegate respondsToSelector:@selector(pickerView:fontForRow:forComponent:)]) {

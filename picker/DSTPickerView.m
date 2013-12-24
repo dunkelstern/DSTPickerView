@@ -469,7 +469,6 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
     _showsSelectionIndicator = showsSelectionIndicator;
     [selectionIndicator setHidden:!showsSelectionIndicator];
 }
-#pragma mark - Internal
 
 - (void)selectRow:(NSInteger)row inComponent:(NSInteger)component animated:(BOOL)animated notify:(BOOL)notify {
     UIScrollView *scrollView = tableViews[component];
@@ -489,6 +488,8 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
         }
     }
 }
+
+#pragma mark - Internal
 
 - (void)notifyDelegateOfRowChange:(NSDictionary *)data {
     if ([data[@"row"] integerValue] == -1) {

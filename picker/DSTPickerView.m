@@ -818,6 +818,12 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
     return [cols[idx] count];
 }
 
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if ([_delegate respondsToSelector:@selector(pickerViewWillBeginDragging:)]) {
+        [_delegate pickerViewWillBeginDragging:self];
+    }
+}
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     // play tock sound if row changed
     NSUInteger idx = [tableViews indexOfObject:scrollView];

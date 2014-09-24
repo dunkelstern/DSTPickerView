@@ -33,6 +33,9 @@
 // if title-text is returned these are called too (return nil for default)
 - (UIFont *)pickerView:(DSTPickerView *)pickerView fontForRow:(NSInteger)row forComponent:(NSInteger)component;
 - (UIColor *)pickerView:(DSTPickerView *)pickerView colorForRow:(NSInteger)row forComponent:(NSInteger)component;
+
+// implement if you wanna be notified when the user starts interacting with the picker view
+- (void)pickerViewWillBeginDragging:(DSTPickerView *)pickerView;
 @end
 
 @protocol DSTPickerViewDataSource <NSObject>

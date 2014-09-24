@@ -54,8 +54,12 @@
 @property (nonatomic, strong) UIColor *backgroundGradientStartColor;
 @property (nonatomic, strong) UIColor *backgroundGradientEndColor;
 @property (nonatomic, strong) UIColor *selectionIndicatorBaseColor;
+@property (nonatomic, strong) UIColor *componentBackgroundColor;
 @property (nonatomic, assign) BOOL addShine;
+@property (nonatomic, assign) BOOL drawComponentBorders;
+@property (nonatomic, assign) BOOL drawDarkeners;
 @property (nonatomic, assign) CGFloat elementDistance;
+@property (nonatomic, assign) CGFloat verticalPadding;
 
 - (NSInteger)numberOfRowsInComponent:(NSInteger)component;
 - (void)reloadAllComponents;

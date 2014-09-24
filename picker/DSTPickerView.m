@@ -47,6 +47,8 @@
 
 @interface DSTPickerContentView : UIView
 
+@property (nonatomic, assign) BOOL drawComponentBorders;
+
 @end
 
 @implementation  DSTPickerContentView
@@ -66,15 +68,17 @@
     [self.backgroundColor setFill];
     CGContextFillRect(context, CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height));
 
-    // black border
-    [[UIColor blackColor] setFill];
-    CGContextFillRect(context, CGRectMake(0, 0, COMPONENT_BORDER_WIDTH, self.bounds.size.height));
-    CGContextFillRect(context, CGRectMake(self.bounds.size.width - COMPONENT_BORDER_WIDTH, 0, COMPONENT_BORDER_WIDTH, self.bounds.size.height));
+    if (_drawComponentBorders) {
+        // black border
+        [[UIColor blackColor] setFill];
+        CGContextFillRect(context, CGRectMake(0, 0, COMPONENT_BORDER_WIDTH, self.bounds.size.height));
+        CGContextFillRect(context, CGRectMake(self.bounds.size.width - COMPONENT_BORDER_WIDTH, 0, COMPONENT_BORDER_WIDTH, self.bounds.size.height));
 
-    // inner border
-    [[UIColor lightGrayColor] setFill];
-    CGContextFillRect(context, CGRectMake(COMPONENT_BORDER_WIDTH, 0, COMPONENT_INNER_BORDER_WIDTH, self.bounds.size.height));
-    CGContextFillRect(context, CGRectMake(self.bounds.size.width - COMPONENT_PADDING, 0, COMPONENT_INNER_BORDER_WIDTH, self.bounds.size.height));
+        // inner border
+        [[UIColor lightGrayColor] setFill];
+        CGContextFillRect(context, CGRectMake(COMPONENT_BORDER_WIDTH, 0, COMPONENT_INNER_BORDER_WIDTH, self.bounds.size.height));
+        CGContextFillRect(context, CGRectMake(self.bounds.size.width - COMPONENT_PADDING, 0, COMPONENT_INNER_BORDER_WIDTH, self.bounds.size.height));
+    }
 
     CGContextRestoreGState(context);
 }
@@ -158,8 +162,12 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
     _backgroundGradientStartColor = [UIColor colorWithRed:26.0/255.0 green:35.0/255.0 blue:78.0/255.0 alpha:1.0];
     _backgroundGradientEndColor = [UIColor colorWithRed:32.0/255.0 green:34.0/255.0 blue:41.0/255.0 alpha:1.0];
     _selectionIndicatorBaseColor = [UIColor colorWithRed:118.0/255.0 green:126.0/255.0 blue:180.0/255.0 alpha:0.5];
+    _componentBackgroundColor = [UIColor whiteColor];
     _addShine = YES;
+    _drawComponentBorders = YES;
+    _drawDarkeners = YES;
     _elementDistance = 20;
+    _verticalPadding = 10;
     
     components = [NSMutableArray array];
     componentWidths = [NSMutableArray array];
@@ -535,13 +543,14 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
         } else {
             // create new tableviews
             content = [[DSTPickerContentView alloc] initWithFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue], self.bounds.size.height - 20)];
-            [content setBackgroundColor:[UIColor whiteColor]];
+            [content setBackgroundColor:_componentBackgroundColor];
             
             tableView = [[UITableView alloc] initWithFrame:CGRectMake(COMPONENT_PADDING,
                                                                       ([components[idx] length] > 0) ? 20.0 : 0.0,
                                                                       [componentWidths[idx] floatValue]-2*COMPONENT_PADDING,
                                                                       self.bounds.size.height - 20)
                                                      style:UITableViewStylePlain];
+            [tableView setBackgroundColor:[UIColor clearColor]];
             [tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
             [tableView setScrollIndicatorInsets:UIEdgeInsetsMake(0, 0, 0, -10)];
             [tableView setClipsToBounds:YES];
@@ -584,18 +593,18 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
 - (void)layoutSubviews {
     __block CGFloat x = 0.0;
     [contentViews enumerateObjectsUsingBlock:^(DSTPickerContentView *contentView, NSUInteger idx, BOOL *stop) {
-        [contentView setFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue], self.bounds.size.height - 20)];
+        [contentView setFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue], self.bounds.size.height - _verticalPadding * 2)];
         x += [componentWidths[idx] floatValue];
     }];
     [tableViews enumerateObjectsUsingBlock:^(UITableView *tableView, NSUInteger idx, BOOL *stop) {
         CGFloat top = 0;
         if ([components[idx] length] > 0) {
-            top += 20;
+            top += _verticalPadding * 2;
         }
         [tableView setFrame:CGRectMake(COMPONENT_PADDING,
                                        top,
                                        [componentWidths[idx] floatValue]-2*COMPONENT_PADDING,
-                                       self.bounds.size.height - 20 - top)];
+                                       self.bounds.size.height - (_verticalPadding * 2) - top)];
         
         CGFloat inset = floorf((tableView.frame.size.height - [rowSizes[idx] floatValue] - _elementDistance) / 2.0);
         [tableView setContentInset:UIEdgeInsetsMake(inset, 0, inset, 0)];
@@ -604,7 +613,7 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
     }];
 
     CGFloat offset = [self calculateTableViewOffset];
-    [roundCorners setFrame:CGRectMake(offset, 10, self.bounds.size.width - offset * 2.0, self.bounds.size.height - 20)];
+    [roundCorners setFrame:CGRectMake(offset, _verticalPadding, self.bounds.size.width - offset * 2.0, self.bounds.size.height - _verticalPadding * 2)];
 
     [darkenTop setImage:nil];
     [darkenBottom setImage:nil];
@@ -612,6 +621,10 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
 }
 
 - (void)setupDarkeners {
+    if (!_drawDarkeners) {
+        return;
+    }
+    
     if ([darkenTop image] == nil) {
         UIGraphicsBeginImageContext(CGSizeMake(16, floorf((self.bounds.size.height - 20) / 4)));
         CGContextRef context = UIGraphicsGetCurrentContext();
@@ -780,6 +793,7 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
     DSTPickerTableViewCell *cell = (DSTPickerTableViewCell *)[tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (!cell) {
         cell = [[DSTPickerTableViewCell alloc] initWithReuseIdentifier:@"cell"];
+        cell.backgroundColor = [UIColor clearColor];
     }
 
     NSMutableArray *subviews = [[NSMutableArray alloc] initWithCapacity:[[cell.contentView subviews] count]];

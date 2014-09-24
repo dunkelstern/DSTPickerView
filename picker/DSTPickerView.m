@@ -81,9 +81,9 @@
 
 @end
 
-static void cubicInterpolation(void *info, const float *input, float *output) {
+static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output) {
     BOOL drawInverse = *(BOOL *)info;
-    float position = *input;
+    CGFloat position = *input;
 
     CGFloat intensity;
     if (drawInverse) {
@@ -559,7 +559,7 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
             [label setTextColor:[UIColor blackColor]];
             [label setFont:[UIFont systemFontOfSize:13.0]];
             [label setAdjustsFontSizeToFitWidth:YES];
-            [label setTextAlignment:UITextAlignmentCenter];
+            [label setTextAlignment:NSTextAlignmentCenter];
             [label setText:components[idx]];
             [content addSubview:label];
         }
@@ -616,8 +616,8 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
         UIGraphicsBeginImageContext(CGSizeMake(16, floorf((self.bounds.size.height - 20) / 4)));
         CGContextRef context = UIGraphicsGetCurrentContext();
 
-        static const float input_value_range[2] = {0, 1};
-        static const float output_value_ranges[8] = {0, 1, 0, 1, 0, 1, 0, 1};
+        static const CGFloat input_value_range[2] = {0, 1};
+        static const CGFloat output_value_ranges[8] = {0, 1, 0, 1, 0, 1, 0, 1};
         CGFunctionCallbacks callbacks = {0, cubicInterpolation, NULL};
 
         BOOL drawInverse = NO;
@@ -648,8 +648,8 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
         UIGraphicsBeginImageContext(CGSizeMake(16, floorf((self.bounds.size.height - 20) / 4)));
         CGContextRef context = UIGraphicsGetCurrentContext();
 
-        static const float input_value_range[2] = {0, 1};
-        static const float output_value_ranges[8] = {0, 1, 0, 1, 0, 1, 0, 1};
+        static const CGFloat input_value_range[2] = {0, 1};
+        static const CGFloat output_value_ranges[8] = {0, 1, 0, 1, 0, 1, 0, 1};
         CGFunctionCallbacks callbacks = {0, cubicInterpolation, NULL};
 
         BOOL drawInverse = YES;
@@ -703,8 +703,8 @@ static void cubicInterpolation(void *info, const float *input, float *output) {
         CGContextRestoreGState(context);
         CGGradientRelease(gradient);
 
-        static const float input_value_range[2] = {0, 1};
-        static const float output_value_ranges[8] = {0, 1, 0, 1, 0, 1, 0, 1};
+        static const CGFloat input_value_range[2] = {0, 1};
+        static const CGFloat output_value_ranges[8] = {0, 1, 0, 1, 0, 1, 0, 1};
         CGFunctionCallbacks callbacks = {0, cubicInterpolation, NULL};
 
         BOOL drawInverse = NO;

@@ -529,12 +529,12 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
         if (idx < contentViews.count) {
             // reuse available tableviews
             content = contentViews[idx];
-            [content setFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue], self.bounds.size.height - 20)];
+            [content setFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue], self.bounds.size.height - (_verticalPadding * 2))];
             tableView = tableViews[idx];
             [tableView setFrame:CGRectMake(COMPONENT_PADDING,
-                                           ([components[idx] length] > 0) ? 20.0 : 0.0,
+                                           ([components[idx] length] > 0) ? (_verticalPadding * 2) : 0.0,
                                            [componentWidths[idx] floatValue]-2*COMPONENT_PADDING,
-                                           self.bounds.size.height - 20)];
+                                           self.bounds.size.height - (_verticalPadding * 2))];
             if ([components[idx] length] > 0) {
                 label = (UILabel *)[content viewWithTag:LABEL_TAG];
                 [label setFrame:CGRectMake(0, 0, [componentWidths[idx] floatValue], 20.0)];
@@ -542,13 +542,13 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
             [tableView reloadData];
         } else {
             // create new tableviews
-            content = [[DSTPickerContentView alloc] initWithFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue], self.bounds.size.height - 20)];
+            content = [[DSTPickerContentView alloc] initWithFrame:CGRectMake(x, 0, [componentWidths[idx] floatValue], self.bounds.size.height - (_verticalPadding * 2))];
             [content setBackgroundColor:_componentBackgroundColor];
             
             tableView = [[UITableView alloc] initWithFrame:CGRectMake(COMPONENT_PADDING,
-                                                                      ([components[idx] length] > 0) ? 20.0 : 0.0,
+                                                                      ([components[idx] length] > 0) ? (_verticalPadding * 2) : 0.0,
                                                                       [componentWidths[idx] floatValue]-2*COMPONENT_PADDING,
-                                                                      self.bounds.size.height - 20)
+                                                                      self.bounds.size.height - (_verticalPadding * 2))
                                                      style:UITableViewStylePlain];
             [tableView setBackgroundColor:[UIColor clearColor]];
             [tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -585,7 +585,7 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
     }];
 
     CGFloat offset = [self calculateTableViewOffset];
-    [roundCorners setFrame:CGRectMake(offset, 10, self.bounds.size.width - offset * 2.0, self.bounds.size.height - 20)];
+    [roundCorners setFrame:CGRectMake(offset, _verticalPadding, self.bounds.size.width - offset * 2.0, self.bounds.size.height - (_verticalPadding * 2))];
 
     [self setupDarkeners];
 }
@@ -626,7 +626,7 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
     }
     
     if ([darkenTop image] == nil) {
-        UIGraphicsBeginImageContext(CGSizeMake(16, floorf((self.bounds.size.height - 20) / 4)));
+        UIGraphicsBeginImageContext(CGSizeMake(16, floorf((self.bounds.size.height - (_verticalPadding * 2)) / 4)));
         CGContextRef context = UIGraphicsGetCurrentContext();
 
         static const CGFloat input_value_range[2] = {0, 1};
@@ -643,7 +643,7 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
                                                           &callbacks);
         CGShadingRef shading = CGShadingCreateAxial(colorspace,
                                                     CGPointZero,
-                                                    CGPointMake(0.0, floorf((self.bounds.size.height - 20) / 4)),
+                                                    CGPointMake(0.0, floorf((self.bounds.size.height - (_verticalPadding * 2)) / 4)),
                                                     gradientFunction,
                                                     NO,
                                                     NO);
@@ -658,7 +658,7 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
     }
 
     if ([darkenBottom image] == nil) {
-        UIGraphicsBeginImageContext(CGSizeMake(16, floorf((self.bounds.size.height - 20) / 4)));
+        UIGraphicsBeginImageContext(CGSizeMake(16, floorf((self.bounds.size.height - (_verticalPadding * 2)) / 4)));
         CGContextRef context = UIGraphicsGetCurrentContext();
 
         static const CGFloat input_value_range[2] = {0, 1};
@@ -675,7 +675,7 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
                                                           &callbacks);
         CGShadingRef shading = CGShadingCreateAxial(colorspace,
                                                     CGPointZero,
-                                                    CGPointMake(0.0, floorf((self.bounds.size.height - 20) / 4)),
+                                                    CGPointMake(0.0, floorf((self.bounds.size.height - (_verticalPadding * 2)) / 4)),
                                                     gradientFunction,
                                                     NO,
                                                     NO);
@@ -756,10 +756,10 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
     }
 
     [roundCorners bringSubviewToFront:darkenTop];
-    [darkenTop setFrame:CGRectMake(0, 0, roundCorners.bounds.size.width, floorf((self.bounds.size.height - 20) / 4))];
+    [darkenTop setFrame:CGRectMake(0, 0, roundCorners.bounds.size.width, floorf((self.bounds.size.height - (_verticalPadding * 2)) / 4))];
 
     [roundCorners bringSubviewToFront:darkenBottom];
-    [darkenBottom setFrame:CGRectMake(0, roundCorners.bounds.size.height - floorf((self.bounds.size.height - 20) / 4), roundCorners.bounds.size.width, floorf((self.bounds.size.height - 20) / 4))];
+    [darkenBottom setFrame:CGRectMake(0, roundCorners.bounds.size.height - floorf((self.bounds.size.height - (_verticalPadding * 2)) / 4), roundCorners.bounds.size.width, floorf((self.bounds.size.height - (_verticalPadding * 2)) / 4))];
 
     [roundCorners bringSubviewToFront:selectionIndicator];
     [selectionIndicator setFrame:CGRectMake(0, floorf((roundCorners.bounds.size.height - height + 7) / 2.0), roundCorners.bounds.size.width, height + 15)];

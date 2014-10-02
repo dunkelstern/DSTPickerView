@@ -33,6 +33,9 @@
 // if title-text is returned these are called too (return nil for default)
 - (UIFont *)pickerView:(DSTPickerView *)pickerView fontForRow:(NSInteger)row forComponent:(NSInteger)component;
 - (UIColor *)pickerView:(DSTPickerView *)pickerView colorForRow:(NSInteger)row forComponent:(NSInteger)component;
+
+// implement if you wanna be notified when the user starts interacting with the picker view
+- (void)pickerViewWillBeginDragging:(DSTPickerView *)pickerView;
 @end
 
 @protocol DSTPickerViewDataSource <NSObject>
@@ -51,8 +54,12 @@
 @property (nonatomic, strong) UIColor *backgroundGradientStartColor;
 @property (nonatomic, strong) UIColor *backgroundGradientEndColor;
 @property (nonatomic, strong) UIColor *selectionIndicatorBaseColor;
+@property (nonatomic, strong) UIColor *componentBackgroundColor;
 @property (nonatomic, assign) BOOL addShine;
+@property (nonatomic, assign) BOOL drawComponentBorders;
+@property (nonatomic, assign) BOOL drawDarkeners;
 @property (nonatomic, assign) CGFloat elementDistance;
+@property (nonatomic, assign) CGFloat verticalPadding;
 
 - (NSInteger)numberOfRowsInComponent:(NSInteger)component;
 - (void)reloadAllComponents;

@@ -67,6 +67,7 @@
 - (CGSize)rowSizeForComponent:(NSInteger)component;
 - (NSInteger)selectedRowInComponent:(NSInteger)component;
 - (void)selectRow:(NSInteger)row inComponent:(NSInteger)component animated:(BOOL)animated;
+- (void)selectRow:(NSInteger)row inComponent:(NSInteger)component animated:(BOOL)animated notify:(BOOL)notify;
 - (UIView *)viewForRow:(NSInteger)row forComponent:(NSInteger)component;
 
 @end

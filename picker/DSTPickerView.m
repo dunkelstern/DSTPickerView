@@ -373,7 +373,7 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
         }
 
         UIView *item = nil;
-        if ((title) && ([title length] > 0)) {
+        if (title) {
             // fetch font if possible
             UIFont *font = nil;
             if ([_delegate respondsToSelector:@selector(pickerView:fontForRow:forComponent:)]) {
@@ -477,7 +477,6 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
     _showsSelectionIndicator = showsSelectionIndicator;
     [selectionIndicator setHidden:!showsSelectionIndicator];
 }
-#pragma mark - Internal
 
 - (void)selectRow:(NSInteger)row inComponent:(NSInteger)component animated:(BOOL)animated notify:(BOOL)notify {
     UIScrollView *scrollView = tableViews[component];
@@ -497,6 +496,8 @@ static void cubicInterpolation(void *info, const CGFloat *input, CGFloat *output
         }
     }
 }
+
+#pragma mark - Internal
 
 - (void)notifyDelegateOfRowChange:(NSDictionary *)data {
     if ([data[@"row"] integerValue] == -1) {
